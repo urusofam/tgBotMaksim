@@ -5,6 +5,7 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 
 import keyboards.keyboards as kb
+import database.requests as rq
 
 router = Router()
 
@@ -14,7 +15,7 @@ class Reg(StatesGroup):
 
 @router.message(CommandStart())
 async def cmd_start(message: Message):
-    await message.answer('Привет!', reply_markup = kb.main_start)
+    await message.answer('Добро пожаловать в бота по субаренде! Пройдите регистарцию!', reply_markup = kb.main_start)
 
 # @router.message(Command('help'))
 # async def cmd_help(message: Message):
@@ -41,6 +42,7 @@ async def write_contact(message: Message, state: FSMContext):
 async def write_name(message: Message, state: FSMContext):
     await state.update_data(name=message.text)
     data = await state.get_data()
+    await rq.add_user(message.from_user.id, data['name'], data['number'])
     await message.answer(f'{data["name"]}\n{data["number"]}', reply_markup = kb.main_menu)
     await state.clear()
 
