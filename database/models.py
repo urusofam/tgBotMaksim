@@ -11,22 +11,21 @@ class Base(AsyncAttrs, DeclarativeBase):
 
 class Arendator(Base):
     __tablename__ = 'arendators'
-
-    id: Mapped[int] = mapped_column(primary_key=True)
+    tg_id = mapped_column(BigInteger, primary_key=True)
     phone: Mapped[str] = mapped_column(String(10))
     name: Mapped[str] = mapped_column(String(50))
-    tg_id = mapped_column(BigInteger)
 
-class Houses(Base):
+class House(Base):
     __tablename__ = 'houses'
 
     id: Mapped[int] = mapped_column(primary_key=True)
     adress: Mapped[str] = mapped_column(String(100))
     reports: Mapped[str] = mapped_column(String(100))
-    quests: Mapped[str] = mapped_column(String(100))
+    guests: Mapped[str] = mapped_column(String(100))
     book: Mapped[str] = mapped_column(String(100))
     reviews: Mapped[str] = mapped_column(String(100))
-    arendator: Mapped[int] = mapped_column(ForeignKey('arendators.id'))
+    agreement: Mapped[str] = mapped_column(String(100))
+    arendator: Mapped[int] = mapped_column(ForeignKey('arendators.tg_id'))
 
 async def async_main():
     async with engine.begin() as conn:

@@ -1,6 +1,6 @@
-from aiogram import F, Router 
+from aiogram import F, Router
 from aiogram.filters import CommandStart, Command
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 
@@ -48,8 +48,19 @@ async def write_name(message: Message, state: FSMContext):
 
 @router.message(F.text == 'Задать вопрос')
 async def ask_question(message: Message):
-    await message.answer('ЛС')
+    await message.answer('Ссылка на Максима')
+
+@router.callback_query(F.data == "to_main")
+async def to_main(callback : CallbackQuery):
+    await callback.answer('Вы вернулись на главную')
+    await callback.message.edit_text('Ваши объекты', reply_markup=await kb.houses_menu(callback.from_user.id))
+    print(callback.message.from_user.id)
+
+@router.callback_query(F.data.startswith('house_'))
+async def house(callback: CallbackQuery):
+    await callback.answer('Вы выбрали дом')
+    await callback.message.edit_text('Выберите что вам нужно', reply_markup= await kb.houses_info_menu(callback.data.split('_')[1]))
 
 @router.message(F.text == 'Мои объекты')
-async def ask_question(message: Message):
-    await message.answer('ЛС', reply_markup = await kb.houses_menu())
+async def write_houses(message: Message):
+    await message.answer('Ваши объекты', reply_markup = await kb.houses_menu(message.from_user.id))
