@@ -1,5 +1,6 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
+from config import admins
 
 from database.requests import get_houses, get_house_info
 
@@ -13,6 +14,21 @@ main_menu = ReplyKeyboardMarkup(keyboard=[
     [KeyboardButton(text='Задать вопрос')]
 ], resize_keyboard=True, input_field_placeholder='Выберите пункт меню.')
 
+
+admin_menu = ReplyKeyboardMarkup(keyboard=[
+    [KeyboardButton(text='Добавить объект')],
+    [KeyboardButton(text='Редактировать объект')],
+    [KeyboardButton(text='Оповещения собственникам')],
+    [KeyboardButton(text='Связаться с собственником')]
+], resize_keyboard=True, input_field_placeholder='Выберите пункт меню.')
+
+def is_admin(user_id):
+    return user_id in admins
+async def send_main_menu(message):
+    if is_admin(message.from_user.id):
+        await message.answer("Выберите действие:", reply_markup=admin_menu)
+    else:
+        await message.answer("Выберите действие:", reply_markup=main_menu)
 
 async def houses_menu(tg_id):
     all_houses = await get_houses(tg_id)
