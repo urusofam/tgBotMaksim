@@ -1,18 +1,25 @@
 import asyncio
 import logging
-from aiogram import Bot, Dispatcher
+import os
 
-from config import TOKEN
+from aiogram import Bot, Dispatcher
+from dotenv import load_dotenv
+
+from admin.handlers import router_admin
 from database.models import async_main
 from handlers.handlers import router
 
+
 async def main():
     await async_main()
-    bot = Bot(token=TOKEN)
+    load_dotenv()
+    bot = Bot(token=os.getenv('TOKEN'))
     dp = Dispatcher()
     dp.include_router(router)
+    dp.include_router(router_admin)
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
+
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
