@@ -77,7 +77,6 @@ async def to_main(callback: CallbackQuery):
 
 @router.callback_query(F.data.startswith('house_'))
 async def house(callback: CallbackQuery):
-    await callback.answer('Вы выбрали дом')
     await callback.message.edit_text('Выберите что вам нужно',
                                      reply_markup=await kb.houses_info_menu(callback.data.split('_')[1]))
 
