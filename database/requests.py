@@ -22,6 +22,15 @@ async def add_user(tg_id, name, phone, username):
             await session.commit()
 
 
+async def add_object(tg_id, city, area, adress):
+    async with async_session() as session:
+        user = await session.scalar(select(House.adress == adress))
+
+        if not user:
+            session.add(House(arendator=tg_id, city=city, area=area, adress=adress))
+            await session.commit()
+
+
 async def get_houses(tg_id):
     async with async_session() as session:
         return await session.scalars(select(House).where(House.arendator == tg_id))

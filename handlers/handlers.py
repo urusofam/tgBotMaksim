@@ -19,6 +19,7 @@ class Reg(StatesGroup):
 async def cmd_start(message: Message):
     await message.answer('Добро пожаловать в бота по субаренде! Пройдите регистарцию!', reply_markup=kb.main_start)
 
+
 @router.message(Command('delete_my'))
 async def cmd_delete_my(message: Message):
     await rq.delete_my_account(message.from_user.id)
@@ -59,7 +60,7 @@ async def write_name(message: Message, state: FSMContext):
         await message.answer("Пользователь с таким ID уже существует.", reply_markup=kb.main_menu)
         await state.clear()
     else:
-        await rq.add_user(message.from_user.id, data['name'], data['number'])
+        await rq.add_user(message.from_user.id, data['name'], data['number'], message.from_user.username)
         await message.answer(f"{data['name']}\n{data['number']}", reply_markup=kb.main_menu)
         await state.clear()
 

@@ -11,18 +11,21 @@ admin_menu = ReplyKeyboardMarkup(keyboard=[
 ], resize_keyboard=True, input_field_placeholder='Выберите пункт меню.')
 
 find_menu = InlineKeyboardMarkup(inline_keyboard=[
-    [InlineKeyboardButton(text='Поиск по ФИО', callback_data = 'find_fio')],
-    [InlineKeyboardButton(text='Поиск по объектам', callback_data = 'find_object')],
-    [InlineKeyboardButton(text='На главную', callback_data = 'to_main_admin')]
+    [InlineKeyboardButton(text='Поиск по ФИО', callback_data='find_fio')],
+    [InlineKeyboardButton(text='Поиск по объектам', callback_data='find_object')],
+    [InlineKeyboardButton(text='На главную', callback_data='to_main_admin')]
 ])
 
 find_arendator_menu = InlineKeyboardMarkup(inline_keyboard=[
-    [InlineKeyboardButton(text='Поиск по ФИО', callback_data = 'find_fio_arendator')],
-    [InlineKeyboardButton(text='Поиск по объектам', callback_data = 'find_object_arendator')],
-    [InlineKeyboardButton(text='На главную', callback_data = 'to_main_admin')]
+    [InlineKeyboardButton(text='Поиск по ФИО', callback_data='find_fio_arendator')],
+    [InlineKeyboardButton(text='Поиск по объектам', callback_data='find_object_arendator')],
+    [InlineKeyboardButton(text='На главную', callback_data='to_main_admin')]
 ])
 
-
+cities_menu = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text = 'Санкт-Петербург', callback_data = 'spb')],
+    [InlineKeyboardButton(text = 'Другой', callback_data = 'another')]
+])
 
 async def all_cities():
     all_city = await all_houses()
@@ -32,7 +35,7 @@ async def all_cities():
         if house.city not in cities:
             keyboard.add(InlineKeyboardButton(text=house.city, callback_data=f"city_{house.city}"))
             cities.append(house.city)
-    keyboard.add(InlineKeyboardButton(text='На главную', callback_data = 'to_main_admin'))
+    keyboard.add(InlineKeyboardButton(text='На главную', callback_data='to_main_admin'))
     return keyboard.adjust(2).as_markup()
 
 
@@ -44,7 +47,7 @@ async def cities_all():
         if house.city not in cities:
             keyboard.add(InlineKeyboardButton(text=house.city, callback_data=f"cities_{house.city}"))
             cities.append(house.city)
-    keyboard.add(InlineKeyboardButton(text='На главную', callback_data = 'to_main_admin'))
+    keyboard.add(InlineKeyboardButton(text='На главную', callback_data='to_main_admin'))
     return keyboard.adjust(2).as_markup()
 
 
@@ -56,7 +59,7 @@ async def all_areas(city):
         if house.area not in areas:
             keyboard.add(InlineKeyboardButton(text=house.area, callback_data=f"area_{house.area}"))
             areas.append(house.area)
-    keyboard.add(InlineKeyboardButton(text='На главную', callback_data = 'to_main_admin'))
+    keyboard.add(InlineKeyboardButton(text='На главную', callback_data='to_main_admin'))
     return keyboard.adjust(2).as_markup()
 
 
@@ -68,7 +71,7 @@ async def areas_all(city):
         if house.area not in areas:
             keyboard.add(InlineKeyboardButton(text=house.area, callback_data=f"areas_{house.area}"))
             areas.append(house.area)
-    keyboard.add(InlineKeyboardButton(text='На главную', callback_data = 'to_main_admin'))
+    keyboard.add(InlineKeyboardButton(text='На главную', callback_data='to_main_admin'))
     return keyboard.adjust(2).as_markup()
 
 
@@ -77,7 +80,7 @@ async def all_house(area):
     keyboard = InlineKeyboardBuilder()
     for house in full_house:
         keyboard.add(InlineKeyboardButton(text=house.adress, callback_data=f"arendator_house_{house.id}"))
-    keyboard.add(InlineKeyboardButton(text='На главную', callback_data = 'to_main_admin'))
+    keyboard.add(InlineKeyboardButton(text='На главную', callback_data='to_main_admin'))
     return keyboard.adjust(2).as_markup()
 
 
@@ -86,7 +89,7 @@ async def house_all(area):
     keyboard = InlineKeyboardBuilder()
     for house in full_house:
         keyboard.add(InlineKeyboardButton(text=house.adress, callback_data=f"username_house_{house.id}"))
-    keyboard.add(InlineKeyboardButton(text='На главную', callback_data = 'to_main_admin'))
+    keyboard.add(InlineKeyboardButton(text='На главную', callback_data='to_main_admin'))
     return keyboard.adjust(2).as_markup()
 
 
