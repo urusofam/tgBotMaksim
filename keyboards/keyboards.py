@@ -13,6 +13,12 @@ main_menu = ReplyKeyboardMarkup(keyboard=[
     [KeyboardButton(text='Задать вопрос')]
 ], resize_keyboard=True, input_field_placeholder='Выберите пункт меню.')
 
+help_menu = ReplyKeyboardMarkup(keyboard=[
+    [KeyboardButton(text='Инструкция пользователя')],
+    [KeyboardButton(text='Инструкция администратора')],
+    [KeyboardButton(text='Обратиться в техподдержку')],
+    [KeyboardButton(text='Назад')]
+], resize_keyboard=True, input_field_placeholder='Выберите пункт меню:')
 
 async def houses_menu(tg_id):
     all_houses = await get_houses(tg_id)

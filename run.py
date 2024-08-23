@@ -3,10 +3,10 @@ import logging
 import os
 
 from aiogram import Bot, Dispatcher, F
-from aiogram.types import CallbackQuery, Message
+from dotenv import load_dotenv
+from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
-from dotenv import load_dotenv
 
 from admin.handlers import router_admin
 from database.models import async_main
@@ -35,7 +35,7 @@ async def main():
 
 @dp.callback_query(F.data.startswith('guests_'))
 async def report_guests(callback: CallbackQuery):
-    await callback.answer('Вы отправили оповещение')
+    await callback.message.answer('Вы отправили оповещение.')
     house_info = await rq.get_house_info(callback.data.split('_')[1])
     await bot.send_message(chat_id=house_info.arendator,
                            text=f'По вашему объекту {house_info.adress} добавлена новая информация в разделе гостей')
@@ -44,7 +44,7 @@ async def report_guests(callback: CallbackQuery):
 
 @dp.callback_query(F.data.startswith('bron_'))
 async def report_bron(callback: CallbackQuery):
-    await callback.answer('Вы отправили оповещение')
+    await callback.message.answer('Вы отправили оповещение.')
     house_info = await rq.get_house_info(callback.data.split('_')[1])
     await bot.send_message(chat_id=house_info.arendator,
                            text=f'По вашему объекту {house_info.adress} добавлена новая информация в разделе бронирования')
@@ -53,7 +53,7 @@ async def report_bron(callback: CallbackQuery):
 
 @dp.callback_query(F.data.startswith('reports_'))
 async def report_reports(callback: CallbackQuery):
-    await callback.answer('Вы отправили оповещение')
+    await callback.message.answer('Вы отправили оповещение.')
     house_info = await rq.get_house_info(callback.data.split('_')[1])
     await bot.send_message(chat_id=house_info.arendator,
                            text=f'По вашему объекту {house_info.adress} добавлена новая информация в разделе отчётов')
@@ -62,7 +62,7 @@ async def report_reports(callback: CallbackQuery):
 
 @dp.callback_query(F.data.startswith('reviews_'))
 async def report_reviews(callback: CallbackQuery):
-    await callback.answer('Вы отправили оповещение')
+    await callback.message.answer('Вы отправили оповещение.')
     house_info = await rq.get_house_info(callback.data.split('_')[1])
     await bot.send_message(chat_id=house_info.arendator,
                            text=f'По вашему объекту {house_info.adress} добавлена новая информация в разделе отзывов')
@@ -71,7 +71,7 @@ async def report_reviews(callback: CallbackQuery):
 
 @dp.callback_query(F.data.startswith('agreement_'))
 async def report_agreement(callback: CallbackQuery):
-    await callback.answer('Вы отправили оповещение')
+    await callback.message.answer('Вы отправили оповещение.')
     house_info = await rq.get_house_info(callback.data.split('_')[1])
     await bot.send_message(chat_id=house_info.arendator,
                            text=f'По вашему объекту {house_info.adress} добавлена новая информация в разделе договора')

@@ -27,6 +27,10 @@ cities_menu = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text = 'Другой', callback_data = 'another')]
 ])
 
+back_out = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text='На главную', callback_data='to_main_admin')]
+])
+
 async def all_cities():
     all_city = await all_houses()
     cities = []

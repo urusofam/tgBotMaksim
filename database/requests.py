@@ -1,6 +1,6 @@
 from database.models import async_session
 from database.models import Arendator, House
-from sqlalchemy import select, update, delete
+from sqlalchemy import select, delete
 
 
 async def get_user_by_name(name):

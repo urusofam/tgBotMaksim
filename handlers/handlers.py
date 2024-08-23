@@ -3,7 +3,9 @@ from aiogram.filters import CommandStart, Command
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
+import os
 
+import admin.keyboards as akb
 import keyboards.keyboards as kb
 import database.requests as rq
 
@@ -27,9 +29,12 @@ async def cmd_delete_my(message: Message):
     await message.answer('Добро пожаловать в бота по субаренде! Пройдите регистарцию!', reply_markup=kb.main_start)
 
 
-# @router.message(Command('help'))
-# async def cmd_help(message: Message):
-#     await message.answer('Это команда /help')
+#########################
+@router.message(Command('help'))
+async def cmd_help(message: Message):
+     await message.answer("Выберите пункт меню:", reply_markup=kb.help_menu)
+#########################
+
 
 @router.message(F.text == 'Ввести другой номер телефона')
 async def ask_phone(message: Message, state: FSMContext):
@@ -67,7 +72,7 @@ async def write_name(message: Message, state: FSMContext):
 
 @router.message(F.text == 'Задать вопрос')
 async def ask_question(message: Message):
-    await message.answer('Ссылка на Максима')
+    await message.answer("@simzikk")
 
 
 @router.callback_query(F.data == "to_main")
@@ -85,3 +90,26 @@ async def house(callback: CallbackQuery):
 @router.message(F.text == 'Мои объекты')
 async def write_houses(message: Message):
     await message.answer('Ваши объекты', reply_markup=await kb.houses_menu(message.from_user.id))
+
+
+############################
+@router.message(F.text == 'Инструкция пользователя')
+async def info_sobstv(message: Message):
+    await message.answer('пользовательская инструкция')
+
+@router.message(F.text == 'Инструкция администратора')
+async def info_admin(message: Message):
+    if message.from_user.id == int(os.getenv('ADMIN_ID')):
+        await message.answer('админская инструкция')
+
+@router.message(F.text == 'Обратиться в техподдержку')
+async def teh_pod(message: Message):
+    await message.answer('Если бот не работает, или у вас возникли какие-либо трудности и ошибки при использовании, вы можете задать вопрос напрямую нашему разработчику: @plovmm')
+
+@router.message(F.text == 'Назад')
+async def info_back(message: Message):
+    if message.from_user.id == int(os.getenv('ADMIN_ID')):
+        await message.answer('Вы вернулись в админ панель', reply_markup=akb.admin_menu)
+    else:
+        await message.answer("Вы вернулись в основное меню.", reply_markup=kb.main_menu)
+#############################

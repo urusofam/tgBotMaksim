@@ -66,27 +66,27 @@ async def ask_add_name(message: Message, state: FSMContext):
 @router_admin.callback_query(F.data == 'spb')
 async def ask_city(callback: CallbackQuery, state: FSMContext):
     await state.update_data(city = 'Санкт-Петербург')
-    await callback.message.edit_text('Введите район')
+    await callback.message.edit_text('Введите район', reply_markup=kb.back_out)
     await state.set_state(Add.area)
 
 
 @router_admin.callback_query(F.data == 'another')
 async def ask_city(callback: CallbackQuery, state: FSMContext):
-    await callback.message.edit_text('Введите город')
+    await callback.message.edit_text('Введите город', reply_markup=kb.back_out)
     await state.set_state(Add.city)
 
 
 @router_admin.message(Add.city)
 async def ask_add_city(message: Message, state: FSMContext):
     await state.update_data(city = message.text)
-    await message.answer('Введите район')
+    await message.answer('Введите район', reply_markup=kb.back_out)
     await state.set_state(Add.area)
 
 
 @router_admin.message(Add.area)
 async def ask_add_area(message: Message, state: FSMContext):
     await state.update_data(area = message.text)
-    await message.answer('Введите адрес')
+    await message.answer('Введите адрес', reply_markup=kb.back_out)
     await state.set_state(Add.adress)
 
 
@@ -186,14 +186,6 @@ async def write_to_arendator(callback: CallbackQuery):
     else:
         await callback.message.edit_text('Арендатор не найден')
 
-
-@router_admin.callback_query(F.data.startswith('guests_'))
-async def edit_guests(callback: CallbackQuery):
-    await callback.answer('Вы отправили оповещение')
-    house_info = await get_house_info(callback.data.split('_')[1])
-    await SendMessage(chat_id=house_info.arendator,
-                      text=f'По вашему объекту {house_info.adress} добавлена новая информация в разделе бронирование')
-    await callback.message.delete()
 
 
 @router_admin.callback_query(F.data == 'to_main_admin')
