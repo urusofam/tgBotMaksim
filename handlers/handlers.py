@@ -18,19 +18,20 @@ class Reg(StatesGroup):
     name = State()
     number = State()
 
-
 @router.message(CommandStart())
 async def cmd_start(message: Message):
     existing_user = await rq.get_user_by_tg_id(message.from_user.id)
     if existing_user:
         await message.answer("Пользователь с таким ID уже существует", reply_markup=kb.main_menu)
+    else:
+        await message.answer('Добро пожаловать в бота по субаренде! Пройдите регистарцию!', reply_markup=kb.main_start)
 
 
 @router.message(Command('delete_my'))
 async def cmd_delete_my(message: Message):
     await rq.delete_my_account(message.from_user.id)
     await message.answer("Ваш аккаунт успешно удален.")
-    await message.answer('Добро пожаловать в бота от компании Charming Apartments для обственников недвижимости! Пройдите регистарцию!', reply_markup=kb.main_start)
+    await message.answer('Добро пожаловать в бота от компании Charming Apartments для cобственников недвижимости! Пройдите регистарацию!', reply_markup=kb.main_start)
 
 
 @router.message(Command('help'))
