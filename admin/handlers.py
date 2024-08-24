@@ -129,8 +129,8 @@ async def write_object(message: Message, state: FSMContext):
     data = await state.get_data()
     await rq.add_object(data['name'], data['city'], data['area'], data['adress'])
     arendator = await rq.get_user_by_tg_id(data['name'])
-    await message.answer(f"Вы добавили объект:\n Арендатор: {arendator.name}\n Город: {data['city']}\n" +
-                         f"Район: {data['area']}\n Адрес: {data['adress']}",
+    await message.answer(f"Вы добавили объект:\nСобственник: {arendator.name}\nГород: {data['city']}\n" +
+                         f"Район: {data['area']}\nАдрес: {data['adress']}",
                          reply_markup=kb.admin_menu)
     await state.clear()
 
@@ -161,7 +161,7 @@ async def write_to_user(message: Message, state: FSMContext):
     if arendator:
         await message.answer('@' + arendator.username + '\n' + arendator.phone, reply_markup=kb.admin_menu)
     else:
-        await message.answer('Арендатор не найден', reply_markup=kb.admin_menu)
+        await message.answer('Собственник не найден', reply_markup=kb.admin_menu)
     await state.clear()
 
 
@@ -171,7 +171,7 @@ async def choose_object(message: Message, state: FSMContext):
     if person:
         await message.answer('Выберите его объект', reply_markup=await kb.houses_arendator(2, person.tg_id))
     else:
-        await message.answer('Арендатор не найден', reply_markup=kb.admin_menu)
+        await message.answer('Собственник не найден', reply_markup=kb.admin_menu)
     await state.clear()
 
 
@@ -186,7 +186,7 @@ async def house_arendator(callback: CallbackQuery):
         if arendator:
             await callback.message.edit_text('@' + arendator.username + '\n' + arendator.phone)
         else:
-            await callback.message.edit_text('Арендатор не найден')
+            await callback.message.edit_text('Собственник не найден')
     elif callback.data.split('_')[2] == '3':
         await callback.message.edit_text('Выберите что вы хотите отредактировать',
                                          reply_markup=await kb.houses_info_menu_admin(callback.data.split('_')[3]))

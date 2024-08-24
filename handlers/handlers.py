@@ -30,7 +30,7 @@ async def cmd_start(message: Message):
 async def cmd_delete_my(message: Message):
     await rq.delete_my_account(message.from_user.id)
     await message.answer("Ваш аккаунт успешно удален.")
-    await message.answer('Добро пожаловать в бота по субаренде! Пройдите регистарцию!', reply_markup=kb.main_start)
+    await message.answer('Добро пожаловать в бота от компании Charming Apartments для обственников недвижимости! Пройдите регистарцию!', reply_markup=kb.main_start)
 
 
 @router.message(Command('help'))
