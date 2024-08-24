@@ -3,10 +3,10 @@ import logging
 import os
 
 from aiogram import Bot, Dispatcher, F
-from dotenv import load_dotenv
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import CallbackQuery, Message
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
+from dotenv import load_dotenv
 
 from admin.handlers import router_admin
 from database.models import async_main
@@ -33,57 +33,30 @@ async def main():
     await dp.start_polling(bot)
 
 
-@dp.callback_query(F.data.startswith('guests_'))
-async def report_guests(callback: CallbackQuery):
-    await callback.message.answer('Вы отправили оповещение.')
-    house_info = await rq.get_house_info(callback.data.split('_')[1])
-    await bot.send_message(chat_id=house_info.arendator,
-                           text=f'По вашему объекту {house_info.adress} добавлена новая информация в разделе гостей')
+@dp.callback_query(F.data.startswith('report_'))
+async def report_arendator(callback: CallbackQuery, state: FSMContext):
+    await callback.answer('Вы отправили оповещение')
+    house_info = await rq.get_house_info(callback.data.split('_')[2])
+    if callback.data.split('_')[1] == 'guests':
+        await bot.send_message(chat_id=house_info.arendator,
+                               text=f'По вашему объекту {house_info.adress} добавлена новая информация в разделе гостей')
+    elif callback.data.split('_')[1] == 'bron':
+        await bot.send_message(chat_id=house_info.arendator,
+                               text=f'По вашему объекту {house_info.adress} добавлена новая информация в разделе бронирования')
+    elif callback.data.split('_')[1] == 'reports':
+        await bot.send_message(chat_id=house_info.arendator,
+                               text=f'По вашему объекту {house_info.adress} добавлена новая информация в разделе отчётов')
+    elif callback.data.split('_')[1] == 'reviews':
+        await bot.send_message(chat_id=house_info.arendator,
+                               text=f'По вашему объекту {house_info.adress} добавлена новая информация в разделе отзывов')
+    elif callback.data.split('_')[1] == 'agreement':
+        await bot.send_message(chat_id=house_info.arendator,
+                               text=f'По вашему объекту {house_info.adress} добавлена новая информация в разделе договора')
+    elif callback.data.split('_')[1] == 'other':
+        await callback.message.edit_text('Напишите ваше сообщение')
+        await state.set_state(Report.text)
+        await state.update_data(adress=house_info.adress, tg_id=house_info.arendator)
     await callback.message.delete()
-
-
-@dp.callback_query(F.data.startswith('bron_'))
-async def report_bron(callback: CallbackQuery):
-    await callback.message.answer('Вы отправили оповещение.')
-    house_info = await rq.get_house_info(callback.data.split('_')[1])
-    await bot.send_message(chat_id=house_info.arendator,
-                           text=f'По вашему объекту {house_info.adress} добавлена новая информация в разделе бронирования')
-    await callback.message.delete()
-
-
-@dp.callback_query(F.data.startswith('reports_'))
-async def report_reports(callback: CallbackQuery):
-    await callback.message.answer('Вы отправили оповещение.')
-    house_info = await rq.get_house_info(callback.data.split('_')[1])
-    await bot.send_message(chat_id=house_info.arendator,
-                           text=f'По вашему объекту {house_info.adress} добавлена новая информация в разделе отчётов')
-    await callback.message.delete()
-
-
-@dp.callback_query(F.data.startswith('reviews_'))
-async def report_reviews(callback: CallbackQuery):
-    await callback.message.answer('Вы отправили оповещение.')
-    house_info = await rq.get_house_info(callback.data.split('_')[1])
-    await bot.send_message(chat_id=house_info.arendator,
-                           text=f'По вашему объекту {house_info.adress} добавлена новая информация в разделе отзывов')
-    await callback.message.delete()
-
-
-@dp.callback_query(F.data.startswith('agreement_'))
-async def report_agreement(callback: CallbackQuery):
-    await callback.message.answer('Вы отправили оповещение.')
-    house_info = await rq.get_house_info(callback.data.split('_')[1])
-    await bot.send_message(chat_id=house_info.arendator,
-                           text=f'По вашему объекту {house_info.adress} добавлена новая информация в разделе договора')
-    await callback.message.delete()
-
-
-@dp.callback_query(F.data.startswith('other_'))
-async def report_other(callback: CallbackQuery, state: FSMContext):
-    await callback.message.edit_text('Напишите ваше сообщение')
-    house_info = await rq.get_house_info(callback.data.split('_')[1])
-    await state.set_state(Report.text)
-    await state.update_data(adress=house_info.adress, tg_id=house_info.arendator)
 
 
 @dp.message(Report.text)

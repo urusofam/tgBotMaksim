@@ -22,6 +22,7 @@ class Arendator(Base):
     name: Mapped[str] = mapped_column(String(100))
     username: Mapped[str] = mapped_column(String(100))
 
+
 class House(Base):
     __tablename__ = 'houses'
 

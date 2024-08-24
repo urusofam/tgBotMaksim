@@ -20,6 +20,7 @@ help_menu = ReplyKeyboardMarkup(keyboard=[
     [KeyboardButton(text='Назад')]
 ], resize_keyboard=True, input_field_placeholder='Выберите пункт меню:')
 
+
 async def houses_menu(tg_id):
     all_houses = await get_houses(tg_id)
     keyboard = InlineKeyboardBuilder()
@@ -31,10 +32,10 @@ async def houses_menu(tg_id):
 async def houses_info_menu(house_id):
     all_info = await get_house_info(house_id)
     keyboard = InlineKeyboardBuilder()
-    keyboard.add(InlineKeyboardButton(text='Отзывы', url=all_info.reviews))
-    keyboard.add(InlineKeyboardButton(text='Гости', url=all_info.guests))
-    keyboard.add(InlineKeyboardButton(text='Бронирование', url=all_info.book))
-    keyboard.add(InlineKeyboardButton(text='Отчёты', url=all_info.reports))
-    keyboard.add(InlineKeyboardButton(text='Мой договор', url=all_info.agreement))
+    if all_info.reviews: keyboard.add(InlineKeyboardButton(text='Отзывы', url=all_info.reviews))
+    if all_info.guests: keyboard.add(InlineKeyboardButton(text='Гости', url=all_info.guests))
+    if all_info.book: keyboard.add(InlineKeyboardButton(text='Бронирование', url=all_info.book))
+    if all_info.reports: keyboard.add(InlineKeyboardButton(text='Отчёты', url=all_info.reports))
+    if all_info.agreement: keyboard.add(InlineKeyboardButton(text='Мой договор', url=all_info.agreement))
     keyboard.add(InlineKeyboardButton(text='Назад', callback_data="to_main"))
     return keyboard.adjust(2).as_markup()
