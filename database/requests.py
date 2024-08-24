@@ -1,5 +1,4 @@
-from database.models import async_session
-from database.models import Arendator, House
+from database.models import async_session, Arendator, House
 from sqlalchemy import select, update, delete
 
 
@@ -25,15 +24,15 @@ async def add_user(tg_id, name, phone, username='NULL'):
 async def update_object(choice, url, house_id):
     async with async_session() as session:
         if choice == 0:
-            await session.execute(update(House).where(int(house_id) == House.id).values(reviews=url))
+            await session.execute(update(House).where(int(house_id) == House.id).values(book=url))
         elif choice == 1:
             await session.execute(update(House).where(int(house_id) == House.id).values(guests=url))
         elif choice == 2:
-            await session.execute(update(House).where(int(house_id) == House.id).values(book=url))
-        elif choice == 3:
             await session.execute(update(House).where(int(house_id) == House.id).values(reports=url))
-        elif choice == 4:
+        elif choice == 3:
             await session.execute(update(House).where(int(house_id) == House.id).values(agreement=url))
+        elif choice == 4:
+            await session.execute(update(House).where(int(house_id) == House.id).values(reviews=url))
         await session.commit()
 
 
@@ -76,3 +75,13 @@ async def delete_my_account(tg_id):
         await session.execute(delete(House).where(House.arendator == tg_id))
         await session.execute(delete(Arendator).where(Arendator.tg_id == tg_id))
         await session.commit()
+
+async def delete_object(house_id: int) -> bool:
+    async with async_session() as session:
+        async with session.begin():
+            result = await session.execute(delete(House).where(House.id == house_id))
+            await session.commit()
+            if result.rowcount > 0:
+                return True
+            else:
+                return False

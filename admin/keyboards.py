@@ -34,13 +34,14 @@ back_out = InlineKeyboardMarkup(inline_keyboard=[
 
 async def houses_info_menu_admin(house_id):
     keyboard = InlineKeyboardBuilder()
-    keyboard.add(InlineKeyboardButton(text='Отзывы', callback_data=f'redact_reviews_{house_id}'))
-    keyboard.add(InlineKeyboardButton(text='Гости', callback_data=f'redact_guests_{house_id}'))
     keyboard.add(InlineKeyboardButton(text='Бронирование', callback_data=f'redact_book_{house_id}'))
     keyboard.add(InlineKeyboardButton(text='Отчёты', callback_data=f'redact_reports_{house_id}'))
-    keyboard.add(InlineKeyboardButton(text='Мой договор', callback_data=f'redact_agreement_{house_id}'))
+    keyboard.add(InlineKeyboardButton(text='Гости', callback_data=f'redact_guests_{house_id}'))
+    keyboard.add(InlineKeyboardButton(text='Отзывы', callback_data=f'redact_reviews_{house_id}'))
+    keyboard.add(InlineKeyboardButton(text='Договор', callback_data=f'redact_agreement_{house_id}'))
+    keyboard.add(InlineKeyboardButton(text='Удалить объект', callback_data=f'redact_delete_{house_id}'))
     keyboard.add(InlineKeyboardButton(text='На главную', callback_data="to_main_admin"))
-    return keyboard.adjust(2).as_markup()
+    return keyboard.adjust(1).as_markup()
 
 
 async def all_cities(choice):
@@ -73,7 +74,7 @@ async def all_house(choice, area):
     for house in full_house:
         keyboard.add(InlineKeyboardButton(text=house.adress, callback_data=f"arendator_house_{choice}_{house.id}"))
     keyboard.add(InlineKeyboardButton(text='На главную', callback_data='to_main_admin'))
-    return keyboard.adjust(2).as_markup()
+    return keyboard.adjust(1).as_markup()
 
 
 async def houses_arendator(choice, tg_id):
@@ -82,16 +83,17 @@ async def houses_arendator(choice, tg_id):
     for house in all_houses_arenda:
         keyboard.add(InlineKeyboardButton(text=house.adress, callback_data=f"arendator_house_{choice}_{house.id}"))
     keyboard.add(InlineKeyboardButton(text='На главную', callback_data='to_main_admin'))
-    return keyboard.adjust(2).as_markup()
+    return keyboard.adjust(1).as_markup()
 
 
 async def reports(house_id):
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text='Гости', callback_data=f'report_guests_{house_id}')],
+        [InlineKeyboardButton(text='Новый объект', callback_data=f'report_obj_{house_id}')],
         [InlineKeyboardButton(text='Бронь', callback_data=f'report_bron_{house_id}')],
+        [InlineKeyboardButton(text='Гости', callback_data=f'report_guests_{house_id}')],
         [InlineKeyboardButton(text='Отчёты', callback_data=f'report_reports_{house_id}')],
-        [InlineKeyboardButton(text='Отзывы', callback_data=f'report_reviews_{house_id}')],
         [InlineKeyboardButton(text='Договор', callback_data=f'report_agreement_{house_id}')],
+        [InlineKeyboardButton(text='Отзывы', callback_data=f'report_reviews_{house_id}')],
         [InlineKeyboardButton(text='Другое', callback_data=f'report_other_{house_id}')],
         [InlineKeyboardButton(text='На главную', callback_data='to_main_admin')]
     ])

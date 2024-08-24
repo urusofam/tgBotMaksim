@@ -37,33 +37,49 @@ async def main():
 async def report_arendator(callback: CallbackQuery, state: FSMContext):
     await callback.answer('Вы отправили оповещение')
     house_info = await rq.get_house_info(callback.data.split('_')[2])
-    if callback.data.split('_')[1] == 'guests':
+
+    action_type = callback.data.split('_')[1]
+    if action_type == 'obj':
+        await bot.send_message(chat_id=house_info.arendator,
+                               text=f'Вам добавлен объект: {house_info.adress}. Можете ознакомиться с актуальной информацией по нему в разделе "Мои объекты"')
+        await callback.message.delete()
+    elif action_type == 'guests':
         await bot.send_message(chat_id=house_info.arendator,
                                text=f'По вашему объекту {house_info.adress} добавлена новая информация в разделе гостей')
-    elif callback.data.split('_')[1] == 'bron':
+        await callback.message.delete()
+    elif action_type == 'bron':
         await bot.send_message(chat_id=house_info.arendator,
                                text=f'По вашему объекту {house_info.adress} добавлена новая информация в разделе бронирования')
-    elif callback.data.split('_')[1] == 'reports':
+        await callback.message.delete()
+    elif action_type == 'reports':
         await bot.send_message(chat_id=house_info.arendator,
                                text=f'По вашему объекту {house_info.adress} добавлена новая информация в разделе отчётов')
-    elif callback.data.split('_')[1] == 'reviews':
+        await callback.message.delete()
+    elif action_type == 'reviews':
         await bot.send_message(chat_id=house_info.arendator,
                                text=f'По вашему объекту {house_info.adress} добавлена новая информация в разделе отзывов')
-    elif callback.data.split('_')[1] == 'agreement':
+        await callback.message.delete()
+    elif action_type == 'agreement':
         await bot.send_message(chat_id=house_info.arendator,
                                text=f'По вашему объекту {house_info.adress} добавлена новая информация в разделе договора')
-    elif callback.data.split('_')[1] == 'other':
+        await callback.message.delete()
+    elif action_type == 'other':
         await callback.message.edit_text('Напишите ваше сообщение')
         await state.set_state(Report.text)
         await state.update_data(adress=house_info.adress, tg_id=house_info.arendator)
-    await callback.message.delete()
-
 
 @dp.message(Report.text)
-async def report_text(message: Message, state):
-    await state.update_data(text=message.text)
+async def report_text(message: Message, state: FSMContext):
     data = await state.get_data()
-    await bot.send_message(chat_id=data['tg_id'], text=f'Объект: {data['adress']}\nСообщение: {data['text']}')
+    tg_id = data['tg_id']
+    adress = data['adress']
+    text = message.text
+    await bot.send_message(chat_id=tg_id, text=f'Объект: {adress}\nСообщение: {text}')
+    await message.answer('Вы отправили оповещение')
+    try:
+        await message.delete()
+    except Exception as e:
+        print(f"Не удалось удалить сообщение: {e}")
     await state.clear()
 
 

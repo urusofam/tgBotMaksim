@@ -3,6 +3,7 @@ from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 import os
 from dotenv import load_dotenv
@@ -193,23 +194,48 @@ async def house_arendator(callback: CallbackQuery):
 
 @router_admin.callback_query(F.data.startswith('redact_'))
 async def redact_house(callback: CallbackQuery, state: FSMContext):
-    if callback.data.split('_')[1] == 'reviews':
-        await callback.message.edit_text('Напишите ссылку на отзывы')
-        await state.set_state(Reviews.url)
-    elif callback.data.split('_')[1] == 'guests':
+    action = callback.data.split('_')[1]
+    house_id = callback.data.split('_')[2]
+
+    if action == 'book':
+        await callback.message.edit_text('Напишите ссылку на таблицу бронирования')
+        await state.set_state(Book.url)
+    elif action == 'guests':
         await callback.message.edit_text('Напишите ссылку на сканы договоров с гостями')
         await state.set_state(Guests.url)
-    elif callback.data.split('_')[1] == 'book':
-        await callback.message.edit_text('Напишите ссылку на таблицу с бронированиями')
-        await state.set_state(Book.url)
-    elif callback.data.split('_')[1] == 'reports':
+    elif action == 'reports':
         await callback.message.edit_text('Напишите ссылку на отчёты')
         await state.set_state(Reports.url)
-    elif callback.data.split('_')[1] == 'agreement':
+    elif action == 'agreement':
         await callback.message.edit_text('Напишите ссылку на текущий договор с собственником')
         await state.set_state(Agreement.url)
-    await state.update_data(house_id=callback.data.split('_')[2])
+    elif action == 'reviews':
+        await callback.message.edit_text('Напишите ссылку на отзывы')
+        await state.set_state(Reviews.url)
+    elif action == 'delete':
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text='Подтверждаю', callback_data=f'confirm_delete_{house_id}'),
+             InlineKeyboardButton(text='Отмена', callback_data='cancel_delete')]
+        ])
+        await callback.message.edit_text('Подтвердите удаление', reply_markup=keyboard)
+        await state.set_state('waiting_for_confirmation')
 
+    await state.update_data(house_id=house_id)
+
+
+@router_admin.callback_query(F.data.startswith('confirm_delete_'))
+async def confirm_delete(callback: CallbackQuery, state: FSMContext):
+    house_id = int(callback.data.split('_')[2])
+    success = await rq.delete_object(house_id)
+    if success:
+        await callback.message.edit_text('Объект успешно удалён')
+    await state.clear()
+
+
+@router_admin.callback_query(F.data == 'cancel_delete')
+async def cancel_delete(callback: CallbackQuery, state: FSMContext):
+    await callback.message.edit_text('Удаление отменено.', reply_markup=kb.admin_menu)
+    await state.clear()
 
 @router_admin.message(Reviews.url)
 async def redact_reviews(message: Message, state: FSMContext):
