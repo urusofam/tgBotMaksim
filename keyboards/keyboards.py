@@ -1,6 +1,6 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
-
+import validators
 from database.requests import get_houses, get_house_info
 
 main_start = ReplyKeyboardMarkup(keyboard=[
@@ -32,10 +32,10 @@ async def houses_menu(tg_id):
 async def houses_info_menu(house_id):
     all_info = await get_house_info(house_id)
     keyboard = InlineKeyboardBuilder()
-    if all_info.book: keyboard.add(InlineKeyboardButton(text='Бронирование📆', url=all_info.book))
-    if all_info.guests: keyboard.add(InlineKeyboardButton(text='Гости👥', url=all_info.guests))
-    if all_info.reports: keyboard.add(InlineKeyboardButton(text='Отчёты📊', url=all_info.reports))
-    if all_info.agreement: keyboard.add(InlineKeyboardButton(text='Мой договор📄', url=all_info.agreement))
-    if all_info.reviews: keyboard.add(InlineKeyboardButton(text='Отзывы💌', url=all_info.reviews))
+    if validators.url(all_info.book): keyboard.add(InlineKeyboardButton(text='Бронирование📆', url=all_info.book))
+    if validators.url(all_info.guests): keyboard.add(InlineKeyboardButton(text='Гости👥', url=all_info.guests))
+    if validators.url(all_info.reports): keyboard.add(InlineKeyboardButton(text='Отчёты📊', url=all_info.reports))
+    if validators.url(all_info.agreement): keyboard.add(InlineKeyboardButton(text='Мой договор📄', url=all_info.agreement))
+    if validators.url(all_info.reviews): keyboard.add(InlineKeyboardButton(text='Отзывы💌', url=all_info.reviews))
     keyboard.add(InlineKeyboardButton(text='Назад', callback_data="to_main"))
     return keyboard.adjust(1).as_markup()

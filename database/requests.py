@@ -24,25 +24,30 @@ async def add_user(tg_id, name, phone, username='NULL'):
 async def update_object(choice, url, house_id):
     async with async_session() as session:
         if choice == 0:
-            await session.execute(update(House).where(int(house_id) == House.id).values(book=url))
+            await session.execute(update(House).where(int(house_id) == House.id).values(reviews=url))
         elif choice == 1:
             await session.execute(update(House).where(int(house_id) == House.id).values(guests=url))
         elif choice == 2:
-            await session.execute(update(House).where(int(house_id) == House.id).values(reports=url))
+            await session.execute(update(House).where(int(house_id) == House.id).values(book=url))
         elif choice == 3:
-            await session.execute(update(House).where(int(house_id) == House.id).values(agreement=url))
+            await session.execute(update(House).where(int(house_id) == House.id).values(reports=url))
         elif choice == 4:
-            await session.execute(update(House).where(int(house_id) == House.id).values(reviews=url))
+            await session.execute(update(House).where(int(house_id) == House.id).values(agreement=url))
         await session.commit()
 
 
 async def add_object(tg_id, city, area, adress):
     async with async_session() as session:
-        user = await session.scalar(select(House.adress == adress))
-
-        if not user:
+        house = await session.scalar(select(House).where(House.arendator == tg_id,
+                                                         House.city == city,
+                                                         House.area == area,
+                                                         House.adress == adress))
+        if not house:
             session.add(House(arendator=tg_id, city=city, area=area, adress=adress))
             await session.commit()
+            return True
+        else:
+            return False
 
 
 async def get_houses(tg_id):
@@ -76,12 +81,8 @@ async def delete_my_account(tg_id):
         await session.execute(delete(Arendator).where(Arendator.tg_id == tg_id))
         await session.commit()
 
-async def delete_object(house_id: int) -> bool:
+
+async def delete_object(house_id):
     async with async_session() as session:
-        async with session.begin():
-            result = await session.execute(delete(House).where(House.id == house_id))
-            await session.commit()
-            if result.rowcount > 0:
-                return True
-            else:
-                return False
+        await session.execute(delete(House).where(int(house_id) == House.id))
+        await session.commit()

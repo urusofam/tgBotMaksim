@@ -30,11 +30,11 @@ class House(Base):
     city: Mapped[str] = mapped_column(String(100))
     area: Mapped[str] = mapped_column(String(100))
     adress: Mapped[str] = mapped_column(String(100))
-    book: Mapped[str] = mapped_column(String(100))
-    guests: Mapped[str] = mapped_column(String(100))
     reports: Mapped[str] = mapped_column(String(100))
-    agreement: Mapped[str] = mapped_column(String(100))
+    guests: Mapped[str] = mapped_column(String(100))
+    book: Mapped[str] = mapped_column(String(100))
     reviews: Mapped[str] = mapped_column(String(100))
+    agreement: Mapped[str] = mapped_column(String(100))
     arendator = mapped_column(ForeignKey('arendators.tg_id'))
 
 

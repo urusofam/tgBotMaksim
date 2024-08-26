@@ -35,51 +35,56 @@ async def main():
 
 @dp.callback_query(F.data.startswith('report_'))
 async def report_arendator(callback: CallbackQuery, state: FSMContext):
-    await callback.answer('Вы отправили оповещение')
     house_info = await rq.get_house_info(callback.data.split('_')[2])
-
-    action_type = callback.data.split('_')[1]
-    if action_type == 'obj':
+    choice = callback.data.split('_')[1]
+    if choice == 'obj':
         await bot.send_message(chat_id=house_info.arendator,
-                               text=f'Вам добавлен объект: {house_info.adress}. Можете ознакомиться с актуальной информацией по нему в разделе "Мои объекты"')
+                               text=f'Вам добавлен объект: {house_info.adress}. Можете ознакомиться с актуальной ' +
+                                    f'информацией по нему в разделе "Мои объекты"')
         await callback.message.delete()
-    elif action_type == 'guests':
+        await callback.message.answer('Вы отправили оповещение')
+    elif choice == 'guests':
         await bot.send_message(chat_id=house_info.arendator,
-                               text=f'По вашему объекту {house_info.adress} добавлена новая информация в разделе гостей')
+                               text=f'По вашему объекту {house_info.adress} добавлена ' +
+                                    f'новая информация в разделе гостей')
         await callback.message.delete()
-    elif action_type == 'bron':
+        await callback.message.answer('Вы отправили оповещение')
+    elif choice == 'bron':
         await bot.send_message(chat_id=house_info.arendator,
-                               text=f'По вашему объекту {house_info.adress} добавлена новая информация в разделе бронирования')
+                               text=f'По вашему объекту {house_info.adress} добавлена новая информация в разделе ' +
+                                    f'бронирования')
         await callback.message.delete()
-    elif action_type == 'reports':
+        await callback.message.answer('Вы отправили оповещение')
+    elif choice == 'reports':
         await bot.send_message(chat_id=house_info.arendator,
-                               text=f'По вашему объекту {house_info.adress} добавлена новая информация в разделе отчётов')
+                               text=f'По вашему объекту {house_info.adress} добавлена ' +
+                                    f'новая информация в разделе отчётов')
         await callback.message.delete()
-    elif action_type == 'reviews':
+        await callback.message.answer('Вы отправили оповещение')
+    elif choice == 'reviews':
         await bot.send_message(chat_id=house_info.arendator,
-                               text=f'По вашему объекту {house_info.adress} добавлена новая информация в разделе отзывов')
+                               text=f'По вашему объекту {house_info.adress} добавлена новая ' +
+                                    f'информация в разделе отзывов')
         await callback.message.delete()
-    elif action_type == 'agreement':
+        await callback.message.answer('Вы отправили оповещение')
+    elif choice == 'agreement':
         await bot.send_message(chat_id=house_info.arendator,
-                               text=f'По вашему объекту {house_info.adress} добавлена новая информация в разделе договора')
+                               text=f'По вашему объекту {house_info.adress} добавлена новая информация в разделе ' +
+                                    f'договора')
         await callback.message.delete()
-    elif action_type == 'other':
+        await callback.message.answer('Вы отправили оповещение')
+    elif choice == 'other':
         await callback.message.edit_text('Напишите ваше сообщение')
         await state.set_state(Report.text)
         await state.update_data(adress=house_info.adress, tg_id=house_info.arendator)
 
+
 @dp.message(Report.text)
 async def report_text(message: Message, state: FSMContext):
+    await state.update_data(text=message.text)
     data = await state.get_data()
-    tg_id = data['tg_id']
-    adress = data['adress']
-    text = message.text
-    await bot.send_message(chat_id=tg_id, text=f'Объект: {adress}\nСообщение: {text}')
+    await bot.send_message(chat_id=data['tg_id'], text=f'Объект: {data['adress']}\nСообщение: {data['text']}')
     await message.answer('Вы отправили оповещение')
-    try:
-        await message.delete()
-    except Exception as e:
-        print(f"Не удалось удалить сообщение: {e}")
     await state.clear()
 
 
